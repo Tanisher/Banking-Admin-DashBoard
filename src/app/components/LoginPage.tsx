@@ -1,24 +1,41 @@
+'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Lock, Mail } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Basic validation
+
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
 
-    // Here you would typically add your authentication logic
-    console.log('Login attempt with:', { email, password });
-    console.log()
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    setError('');
+      if (response.ok) {
+        console.log('Login successful!');
+        setError('');
+        router.push('/dashboard');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Invalid credentials');
+      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setError('An unexpected error occurred');
+    }
   };
 
   return (
@@ -27,13 +44,16 @@ const LoginPage = () => {
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Login to Your Account
         </h2>
-        
+
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -54,7 +74,7 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          
+
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
               Password
@@ -74,44 +94,14 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
-            
-            <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                Forgot password?
-              </a>
-            </div>
-          </div>
-          
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Sign in
-            </button>
-          </div>
+
+          <button
+            type="submit"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Sign in
+          </button>
         </form>
-        
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-              Sign up
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );
