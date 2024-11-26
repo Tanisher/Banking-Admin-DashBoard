@@ -1,29 +1,35 @@
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, Mail } from 'lucide-react';
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Basic input validation
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
 
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('https://distinguished-happiness-production.up.railway.app/admin/getAdmin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
+      
       if (response.ok) {
         console.log('Login successful!');
         setError('');
@@ -32,24 +38,19 @@ const LoginPage = () => {
         const errorData = await response.json();
         setError(errorData.message || 'Invalid credentials');
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.error('Error during login:', err);
+      setError('An unexpected error occurred. Please try again later.');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Login to Your Account
-        </h2>
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-xs sm:max-w-md">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Login to Your Account</h2>
 
         {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
             {error}
           </div>
         )}
