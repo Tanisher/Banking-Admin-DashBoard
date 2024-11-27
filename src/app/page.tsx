@@ -8,6 +8,7 @@ export default function Home() {
     mt-8">
      
     <LoginPage/>
+    
     </div>
   );
 }

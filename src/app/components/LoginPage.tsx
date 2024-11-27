@@ -10,7 +10,11 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const router = useRouter();
 
+  
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+
+
     event.preventDefault();
 
     // Basic input validation
@@ -33,7 +37,8 @@ const LoginPage: React.FC = () => {
       if (response.ok) {
         console.log('Login successful!');
         setError('');
-        router.push('/dashboard');
+        router.push("/DashBoard");
+        
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Invalid credentials');
