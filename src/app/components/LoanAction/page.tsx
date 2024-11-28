@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -20,8 +21,6 @@ const LoanAction = () => {
   const [loanDetails, setLoanDetails] = useState<LoanDataDTO | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
-
 
   async function ApproveLoan(): Promise<string> {
     const url = `https://distinguished-happiness-production.up.railway.app/admin/acceptLoan/${loanId}`; // Replace with your actual API base URL
@@ -48,13 +47,12 @@ const LoanAction = () => {
     }
   }
   
-
-  function DeclineLoan(){
-
+  function DeclineLoan() {
+    // Decline logic here
   }
 
-  function AccountInfo(){
-    
+  function AccountInfo() {
+    // Account info logic here
   }
 
   useEffect(() => {
@@ -124,11 +122,18 @@ const LoanAction = () => {
       <button onClick={AccountInfo} className='ml-5 font-extrabold'>ACCOUNT INFORMATION</button>
 
       <div className='justify-center'>
-
-
       </div>
     </div>
   );
 };
 
-export default LoanAction;
+// Wrap the LoanAction component with Suspense
+const LoanActionWithSuspense = () => {
+  return (
+    <Suspense fallback={<div>Loading loan details...</div>}>
+      <LoanAction />
+    </Suspense>
+  );
+};
+
+export default LoanActionWithSuspense;
