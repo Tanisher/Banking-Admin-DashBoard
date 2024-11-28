@@ -1,15 +1,13 @@
-'use client';
-
+'use client'
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
-
 type Loan = {
   loanId: number;
-  loanDate: string;  
+  loanDate: string;
   loanAmount: number;
-  loanType: string;  // Enum value as string
-  loanStatus: string; // Enum value as string
+  loanType: string;
+  loanStatus: string;
   paybackPeriod: number;
   interestRate: number;
   monthlyInstallment: number;
@@ -18,18 +16,13 @@ type Loan = {
 };
 
 const Page = () => {
-  // State to hold the loan data
   const [loans, setLoans] = useState<Loan[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);  // To handle loading state
-  const [error, setError] = useState<string>('');  // To handle errors
-  const [filterPending, setFilterPending] = useState<boolean>(false);  // State for filter
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+  const [filterPending, setFilterPending] = useState<boolean>(false);
   const router = useRouter();
 
-  function LoanAction(){
-
-  }
-
-  // Fetch loan data on component mount
+  // Fetch loan data
   useEffect(() => {
     const fetchLoans = async () => {
       try {
@@ -52,10 +45,16 @@ const Page = () => {
     fetchLoans();
   }, []);
 
-  // Filter loans based on filter state
+  // Filter loans
   const filteredLoans = filterPending
     ? loans.filter((loan) => loan.loanStatus === 'PENDING')
     : loans;
+
+  // Handle Action button click
+  const handleActionClick = (loanId: number, email: string) => {
+    // Navigate to the next page with query parameters
+    router.push(`/components/LoanAction?loanId=${loanId}&email=${email}`);
+  };
 
   if (loading) {
     return (
@@ -69,13 +68,12 @@ const Page = () => {
   return (
     <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">View Loans</h1>
-      
-      {error && <p className="text-red-500">{error}</p>}  {/* Display error message if any */}
 
-      {/* Filter button */}
+      {error && <p className="text-red-500">{error}</p>}
+
       <div className="mb-4 text-right">
         <button
-          onClick={() => setFilterPending(!filterPending)}  // Toggle filter
+          onClick={() => setFilterPending(!filterPending)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
         >
           {filterPending ? 'Show All Loans' : 'Show Pending Loans'}
@@ -99,7 +97,7 @@ const Page = () => {
                 <th className="px-4 py-2 border-b text-left">Monthly Installment</th>
                 <th className="px-4 py-2 border-b text-left">Months Left</th>
                 <th className="px-4 py-2 border-b text-left">Email</th>
-                <th onClick={LoanAction}  className="px-4 py-2 border-b text-left">Action</th>  {/* Added Action button */}
+                <th className="px-4 py-2 border-b text-left">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -116,7 +114,10 @@ const Page = () => {
                   <td className="px-4 py-2 border-b">{loan.monthsLeft}</td>
                   <td className="px-4 py-2 border-b">{loan.email}</td>
                   <td className="px-4 py-2 border-b text-center">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
+                    <button
+                      onClick={() => handleActionClick(loan.loanId, loan.email)}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                    >
                       Action
                     </button>
                   </td>
@@ -127,10 +128,9 @@ const Page = () => {
         </div>
       )}
 
-      {/* Home button */}
       <div className="mt-6 text-center">
         <button
-          onClick={() => router.push("/DashBoard")}
+          onClick={() => router.push('/DashBoard')}
           className="px-6 py-3 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 transition duration-300"
         >
           Go Home
