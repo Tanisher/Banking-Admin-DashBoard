@@ -46,10 +46,35 @@ const LoanAction = () => {
       throw error; // Re-throw for further handling if needed
     }
   }
+
+  ///
+  async function DeclineLoan(): Promise<string> {
+    const url = `https://distinguished-happiness-production.up.railway.app/admin/rejectLoan/${loanId}`; // Replace with your actual API base URL
   
-  function DeclineLoan() {
-    // Decline logic here
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || 'Failed to approve loan');
+      }
+  
+      const result = await response.text(); // Assuming the response is plain text
+      console.log('Loan approved successfully:', result);
+      return result;
+    } catch (error) {
+      console.error('Error approving loan:', error);
+      throw error; // Re-throw for further handling if needed
+    }
   }
+  ///
+  
+ 
 
   function AccountInfo() {
     // Account info logic here
