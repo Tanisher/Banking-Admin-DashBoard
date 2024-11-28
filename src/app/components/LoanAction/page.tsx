@@ -21,9 +21,33 @@ const LoanAction = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  function ApproveLoan(){
 
+
+  async function ApproveLoan(): Promise<string> {
+    const url = `https://distinguished-happiness-production.up.railway.app/admin/acceptLoan/${loanId}`; // Replace with your actual API base URL
+  
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || 'Failed to approve loan');
+      }
+  
+      const result = await response.text(); // Assuming the response is plain text
+      console.log('Loan approved successfully:', result);
+      return result;
+    } catch (error) {
+      console.error('Error approving loan:', error);
+      throw error; // Re-throw for further handling if needed
+    }
   }
+  
 
   function DeclineLoan(){
 
